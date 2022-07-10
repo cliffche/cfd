@@ -1,2 +1,3 @@
-﻿  class.cpp
-  class.vcxproj -> D:\code\cfd\cpp\course\class\class\x64\Debug\class.exe
+﻿copyfunc.obj : error LNK2005: "void __cdecl test1(void)" (?test1@@YAXXZ) 已经在 class.obj 中定义
+copyfunc.obj : error LNK2005: main 已经在 class.obj 中定义
+D:\code\cfd\cpp\course\class\class\x64\Debug\class.exe : fatal error LNK1169: 找到一个或多个多重定义的符号
