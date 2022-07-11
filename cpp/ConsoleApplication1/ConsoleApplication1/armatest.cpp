@@ -1,0 +1,17 @@
+#include <iostream>
+#include <armadillo>
+#ifndef __FUNCTION_H__
+
+using namespace std;
+using namespace arma;
+
+int matCal()
+{
+	mat A(4, 5, fill::randu);
+	mat B(4, 5, fill::randu);
+
+	cout << A * B.t() << endl;
+
+	return 0;
+}
+#endif

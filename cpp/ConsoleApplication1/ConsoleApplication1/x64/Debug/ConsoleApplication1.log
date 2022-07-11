@@ -1,1 +1,6 @@
-﻿  ConsoleApplication1.vcxproj -> F:\cfddev\cpp\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
+﻿C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(514,5): warning MSB8028: 中间目录(x64\Debug\)包含从另一个项目(ConsoleApplication1.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。
+  entry.cpp
+  armatest.cpp
+  正在生成代码...
+armatest.obj : error LNK2005: "int __cdecl matCal(void)" (?matCal@@YAHXZ) 已经在 entry.obj 中定义
+D:\code\cfd\cpp\ConsoleApplication1\x64\Debug\cfd_cliff.exe : fatal error LNK1169: 找到一个或多个多重定义的符号
