@@ -106,7 +106,7 @@
       <ConformanceMode>true</ConformanceMode>
       <CompileAsWinRT>
       </CompileAsWinRT>
-      <AdditionalIncludeDirectories>D:\code\cfd\cpp\cppinclude\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\vcpkg\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
