@@ -1,6 +1,6 @@
 #include <iostream>
 #include <armadillo>
-#ifndef __FUNCTION_H__
+
 
 using namespace std;
 using namespace arma;
@@ -14,4 +14,3 @@ int matCal()
 
 	return 0;
 }
-#endif
