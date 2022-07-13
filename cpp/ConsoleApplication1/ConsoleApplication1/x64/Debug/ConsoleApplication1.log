@@ -2,5 +2,4 @@
   entry.cpp
   armatest.cpp
   正在生成代码...
-armatest.obj : error LNK2005: "int __cdecl matCal(void)" (?matCal@@YAHXZ) 已经在 entry.obj 中定义
-D:\code\cfd\cpp\ConsoleApplication1\x64\Debug\cfd_cliff.exe : fatal error LNK1169: 找到一个或多个多重定义的符号
+  ConsoleApplication1.vcxproj -> F:\cfddev\cpp\ConsoleApplication1\x64\Debug\cfd_cliff.exe

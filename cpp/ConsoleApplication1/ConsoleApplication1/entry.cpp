@@ -1,8 +1,9 @@
 ﻿#include "armatest.h"
+#include "Shape.h"
 
 int main()
 {
-	int a = matCal();
-
+	Square sq;
+	//int a = matCal();
 	return 0;
 }
