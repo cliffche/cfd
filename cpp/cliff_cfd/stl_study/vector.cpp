@@ -99,7 +99,7 @@ void vect3() {
 		cout << endl;
 	}}
 
-//int main() {
-//	vect3();
-//	return 0;
-//}
+int main() {
+	vect3();
+	return 0;
+}
