@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="solver_main.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="jacobi.h">
       <Filter>头文件</Filter>
     </ClInclude>

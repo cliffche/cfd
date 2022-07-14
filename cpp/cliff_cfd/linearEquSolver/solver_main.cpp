@@ -7,8 +7,6 @@ using namespace arma;
 
 
 int main() {
-	mat A(5, 5, fill::randu);
-	//cout << typeid(&A).name() << endl;
-	solver(&A);
+	solver();
 	return 0;
 }
