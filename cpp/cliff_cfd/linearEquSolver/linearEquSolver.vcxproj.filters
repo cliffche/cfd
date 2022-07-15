@@ -18,12 +18,18 @@
     <ClInclude Include="jacobi.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="tridiagonal_matrix_algorthim.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="solver_main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="jacobi.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tridiagonal_matrix_algorthim.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

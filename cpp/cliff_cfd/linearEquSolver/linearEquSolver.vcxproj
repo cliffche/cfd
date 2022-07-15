@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jacobi.h" />
+    <ClInclude Include="tridiagonal_matrix_algorthim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="solver_main.cpp" />
     <ClCompile Include="jacobi.cpp" />
+    <ClCompile Include="tridiagonal_matrix_algorthim.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
