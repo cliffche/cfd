@@ -8,34 +8,37 @@ using namespace arma;
 
 void solver_tdma(mat* a) {
 	cout << *a << endl;
-	vec vec_cache = { 0,0,0,0 };//缓存项
-	int len = a->n_rows;
-	//1.顺序消元依次
-	for (int i = 1; i < len; i++) {				
-		vec_cache = { a->at(i,0),a->at(i,1), a->at(i,2), a->at(i,3) };//缓存
-		cout << *a << endl;
-		a->at(i, 0) = 0;
-		a->at(i, 1) = (a->at(i - 1, 1)) * vec_cache.at(1)- vec_cache.at(0)* (a->at(i - 1, 2));
-		a->at(i, 2) = vec_cache.at(2) * (a->at(i - 1, 1));
-		a->at(i, 3) = a->at(i - 1, 1) * vec_cache.at(3) - a->at(i - 1, 3) * vec_cache.at(0);
+
+	int len = a->n_rows;//行数
+	vec vec_cache(len);//缓存项
+	//1.顺序消元一次
+	for (int i = 1; i < len; i++) {
+		vec_cache = { a->at(i,0),a->at(i,1), a->at(i,2), a->at(i,3) };//缓存a1 b1 c1 d1
+		//cout << *a << endl;
+		a->at(i, 0) = 0;//a2` = 0
+		//b2` = b1*b2 - a2*c1 实际迭代发现b2`必须化成1,因为过大的矩阵会导致后面的项存储溢出 a->at(i, 1) = (a->at(i - 1, 1)) * vec_cache.at(1) - vec_cache.at(0) * (a->at(i - 1, 2));
+		double b_temp = (a->at(i - 1, 1)) * vec_cache.at(1) - vec_cache.at(0) * (a->at(i - 1, 2));
+		a->at(i, 1) = 1;
+		a->at(i, 2) = vec_cache.at(2) * (a->at(i - 1, 1)) / b_temp;//c2` = b1 * c2 /(b1*b2 - a2*c1)
+		a->at(i, 3) = (a->at(i - 1, 1) * vec_cache.at(3) - a->at(i - 1, 3) * vec_cache.at(0)) / b_temp; // d2` = (b1*d2 - a2*d1) /(b1*b2 - a2*c1)
 	}
-	//2.最后两列消掉一个元素
-	
-	//逆序消元一次
-	
-	//求解
-
+	//2.逆序消元一次
+	for (int j = len - 2; j >= 0; j--) {
+		//tdma_soluction.at(j) = ;//d3`` = d3` - d4``*c3
+		a->at(j, 3) = a->at(j, 3) - a->at(j + 1, 3) * a->at(j, 2);
+		a->at(j, 2) = 0;
+	}
 	cout << *a << endl;
-
 }
 
 void init_tdma() {
-	dmat a = {//简化存储三对角矩阵对应的线性方程组Ax = b,对于大型三对角矩阵可以节省内存{a,b,c,d}
-		{1.1 ,1.2 ,0.0 ,1},
-		{1.2 ,1.3 ,1.4 ,2},
-		{2.3 ,4.1 ,2.5 ,3},
-		{1.7 ,1.4 ,1.5 ,4},
-		{0.0 ,2.4 ,3.5 ,5}
+	//压缩存储三对角矩阵对应的线性方程组Ax = b,对于大型三对角矩阵可以节省内存{a,b,c,d}
+	dmat a = {
+		{0,1,2,3},
+		{2,3,4,9},
+		{3,4,5,12},
+		{4,5,6,15},
+		{6,7,0,13}
 	};
 	solver_tdma(&a);
 }
