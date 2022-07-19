@@ -6,7 +6,7 @@ using namespace std;
 using namespace arma;
 /*下一步优化:
 1.矩阵算法测试  高斯法?通用算例?
-2.错误捕捉与处理 
+2.错误捕捉与处理
 3.封装*/
 
 void solver_tdma(mat* a) {
@@ -56,3 +56,6 @@ void init_tdma() {
 	cout << "c2: " << vec_cache.at(2) << endl;
 	cout << "d2: " << vec_cache.at(3) << endl;
 	*/
+int add(int a, int b) {
+	return a + b;
+}
