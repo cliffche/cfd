@@ -4,7 +4,10 @@
 #include "tridiagonal_matrix_algorthim.h"
 using namespace std;
 using namespace arma;
-
+/*下一步优化:
+1.矩阵算法测试  高斯法?通用算例?
+2.错误捕捉与处理 
+3.封装*/
 
 void solver_tdma(mat* a) {
 	cout << *a << endl;
