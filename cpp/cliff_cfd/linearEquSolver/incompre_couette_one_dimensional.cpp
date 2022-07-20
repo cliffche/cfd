@@ -26,8 +26,8 @@ mat* solver_tdma_icod(mat* a) {
 		//tdma_soluction.at(j) = ;//d3`` = d3` - d4``*c3
 		a->at(j, 3) = a->at(j, 3) - a->at(j + 1, 3) * a->at(j, 2);
 		a->at(j, 2) = 0;
+		//a->at(j, 1) = 1;
 	}
-
 	//cout << *a << endl;
 	return a;
 }
@@ -36,66 +36,51 @@ void icod_solver(mat* m_mat) {
 	//cout << *m_mat << endl;
 	mat* b = solver_tdma_icod(*&m_mat);
 	cout << "* b" << endl;
-	cout << *b << endl;
-	mat::row_iterator row_it = b->begin_row(0);
-	const int construct_parameter_E = 1;//构造参数E e = delta_t/(Re * (delta_y **2))
-	//初始化条件,最后一点为1,其余为0
-	double param_a = -0.5 * construct_parameter_E;//
-	double param_b = 1 + construct_parameter_E;
-	double param_c = param_a;
-	int i = -1;
-	while (row_it != b->end_row(20))
-	{
-		i++;
-		cout << i << endl;
-		switch (i)
-		{
-		case 0:
-			*row_it = param_a;
-		case 1:
-			*row_it = param_b;
-		case 2:
-			*row_it = param_c;
-		case 3:
-			i = -1;
-		default:
-			break;
-		}
-		row_it++;
-	}
-	cout << "* b" << endl;
-	cout << *b << endl;
-
+	cout << *b << endl;	
 }
+
 //定义无量纲的计算条件和初始值
 void icod_init() {
 	const int delta_y = 21;//y方向网格
-	const int construct_parameter_E = 1;//构造参数E e = delta_t/(Re * (delta_y **2))
+	//构造参数E e = delta_t/(Re * (delta_y **2))
+	const int construct_parameter_E = 5;
 	//初始化条件,最后一点为1,其余为0
-	vec vec_k(delta_y, fill::zeros);
-	vec_k.at(delta_y - 1) = 1;
 	double param_a = -0.5 * construct_parameter_E;//
 	double param_b = 1 + construct_parameter_E;
 	double param_c = param_a;
 	mat mat(delta_y, 4);
-	//通过链表给矩阵赋值
-	list<double> params_list = { param_a, param_b, param_c,0 };
-	list<double>::iterator  param_it = params_list.begin();
-	mat::row_iterator row_it = mat.begin_row(0);
-	while (row_it != mat.end_row(delta_y - 1))
-	{
-		*row_it = *param_it;
-		param_it++;
-		if (param_it == params_list.end()) {
-			param_it = params_list.begin();
+	for (int i = 0; i < 20; i++) {
+		cout << i << endl;
+		if (i == 0) {//第一次迭代,要给d列赋初始值
+			//通过链表给矩阵赋值
+			list<double> params_list = { param_a, param_b, param_c,0 };
+			list<double>::iterator  param_it = params_list.begin();
+			mat::row_iterator row_it = mat.begin_row(0);
+			while (row_it != mat.end_row(delta_y - 1))
+			{
+				*row_it = *param_it;
+				param_it++;
+				if (param_it == params_list.end()) {
+					param_it = params_list.begin();
+				}
+				row_it++;
+			}
+			//修改第一行和最后一行
+			mat.at(0, 0) = 0;
+			mat.at(delta_y - 1, 2) = 0;
+			mat.at(delta_y - 1, 3) = 1;
+			icod_solver(&mat);
 		}
-		row_it++;
-	}
-	//修改第一行和最后一行
-	mat.at(0, 0) = 0;
-	mat.at(delta_y - 1, 2) = 0;
-	mat.at(delta_y - 1, 3) = 1;
-	icod_solver(&mat);
-
+		else {//其他次迭代,d列根据前一次计算的结果给出
+			for (int i = 0; i < 21; i++) {
+				mat.at(i, 0) = param_a;
+				mat.at(i, 1) = param_b;
+				mat.at(i, 2) = param_c;
+			}
+			mat.at(0, 0) = 0;
+			mat.at(20, 2) = 0;
+		}
+		icod_solver(&mat);
+	}	
 }
 
