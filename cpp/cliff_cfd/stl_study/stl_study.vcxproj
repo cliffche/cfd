@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="entry.cpp" />
+    <ClCompile Include="extend.cpp" />
     <ClCompile Include="vector.cpp" />
     <ClCompile Include="string_learn.cpp" />
   </ItemGroup>

@@ -24,6 +24,9 @@
     <ClCompile Include="string_learn.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="extend.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vector.h">

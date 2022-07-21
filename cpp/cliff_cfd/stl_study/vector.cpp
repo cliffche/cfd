@@ -52,7 +52,7 @@ void vet1() {
 	v.push_back(p5);
 	for (vector<Person>::iterator it = v.begin(); it != v.end(); it++) {
 		//cout << "姓名:" << (*it).name << "年龄:" << (*it).age << endl;
-		cout << "姓名:" <<it->name << "年龄:" << (*it).age << endl;
+		cout << "姓名:" << it->name << "年龄:" << (*it).age << endl;
 	}
 }
 
@@ -69,7 +69,7 @@ void vet2() {
 	v.push_back(&p3);
 	v.push_back(&p4);
 	v.push_back(&p5);
-	for (vector<Person *>::iterator it = v.begin(); it != v.end(); it++) {
+	for (vector<Person*>::iterator it = v.begin(); it != v.end(); it++) {
 		cout << "姓名:" << (*it)->name << "年龄:" << (*it)->age << endl;
 	}
 }
@@ -97,9 +97,7 @@ void vect3() {
 			cout << *ita << " ";
 		}
 		cout << endl;
-	}}
-
-int main() {
-	vect3();
-	return 0;
+	}
 }
+
+
