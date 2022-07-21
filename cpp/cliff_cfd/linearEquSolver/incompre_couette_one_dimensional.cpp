@@ -39,7 +39,10 @@ dmat* solver_tdma_icod(dmat* a) {
 void icod_solver(dmat* m_mat) {
 	//cout << *m_mat << endl;
 	dmat* b = solver_tdma_icod(*&m_mat);
-	cout << *b << endl;
+	cout.precision(11);	
+	cout.setf(ios::fixed);
+	b->raw_print(cout,"b");
+	//cout << *b << endl;
 }
 
 //定义无量纲的计算条件和初始值
@@ -53,7 +56,7 @@ void icod_init() {
 	double param_c = param_a;
 	dmat mat(delta_y, 4);//以 n*4 的形式存储三对角矩阵的A和b
 	//初始化条件,最后一点为1,其余为0
-	for (int i = 0; i < 60; i++) {
+	for (int i = 0; i < 12; i++) {
 		cout << i << endl;
 		if (i == 0) {//第一次迭代,要给d列赋初始值
 			//通过链表给矩阵赋值
@@ -95,7 +98,10 @@ void icod_init() {
 		}
 		cout << "mat last" << mat.at(delta_y - 1, 3) << endl;
 		cout << "mat before cal" << endl;
-		cout << mat << endl;
+		cout.precision(11);
+		cout.setf(ios::fixed);
+		mat.raw_print(cout, "b");
+		//cout << mat << endl;
 		icod_solver(&mat);
 	}
 }
