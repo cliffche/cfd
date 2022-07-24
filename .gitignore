@@ -3,3 +3,4 @@ sw/
 cppinclude/
 .vs/
 x64/
+.vscode/
