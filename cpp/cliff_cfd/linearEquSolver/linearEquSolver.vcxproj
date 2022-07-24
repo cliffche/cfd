@@ -21,10 +21,13 @@
   <ItemGroup>
     <ClInclude Include="incompre_couette_one_dimensional.h" />
     <ClInclude Include="jacobi.h" />
+    <ClInclude Include="quasi_one_dimensional_nozzle_flow.h" />
+    <ClInclude Include="quasi_one_dimensional_nozzle_flow_data.h" />
     <ClInclude Include="tridiagonal_matrix_algorthim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="incompre_couette_one_dimensional.cpp" />
+    <ClCompile Include="quasi_one_dimensional_nozzle_flow.cpp" />
     <ClCompile Include="solver_main.cpp" />
     <ClCompile Include="jacobi.cpp" />
     <ClCompile Include="tridiagonal_matrix_algorthim.cpp" />

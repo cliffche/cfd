@@ -5,11 +5,12 @@
 #include "tridiagonal_matrix_algorthim.h"
 #include  <time.h>
 #include "incompre_couette_one_dimensional.h"
+
 using namespace std;
 using namespace arma;
 
 
-int main() {
+int main11() {
 	clock_t start, finish;
 	start = clock();
 	icod_init();

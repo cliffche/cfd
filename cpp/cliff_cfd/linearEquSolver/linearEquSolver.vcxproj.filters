@@ -24,6 +24,12 @@
     <ClInclude Include="incompre_couette_one_dimensional.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="quasi_one_dimensional_nozzle_flow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="quasi_one_dimensional_nozzle_flow_data.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="solver_main.cpp">
@@ -36,6 +42,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="incompre_couette_one_dimensional.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="quasi_one_dimensional_nozzle_flow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
