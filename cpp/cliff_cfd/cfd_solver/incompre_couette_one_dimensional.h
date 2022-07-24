@@ -1,0 +1,6 @@
+#pragma once
+#ifndef  _IMCOMPRE_COUETTE_ONE_DISMENSIONAL_H_
+#define _IMCOMPRE_COUETTE_ONE_DISMENSIONAL_H_
+
+void icod_init();
+#endif // ! _IMCOMPRE_COUETTE_ONE_DISMENSIONAL_H_

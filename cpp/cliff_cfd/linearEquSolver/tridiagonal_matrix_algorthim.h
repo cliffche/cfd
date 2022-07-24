@@ -1,5 +1,0 @@
-#pragma once
-#ifndef  _THRIDAGONAL_MATRIX_ALGORTHIM_H
-#define _THRIDAGONAL_MATRIX_ALGORTHIM_H
-void init_tdma();
-#endif // ! _THRIDAGONAL_MATRIX_ALGORTHIM_H
