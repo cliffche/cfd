@@ -3,6 +3,7 @@
 #include <map>
 #include <array>
 #include <vector>
+
 using namespace std;
 //void nozzle_solver(int point_x) {
 //
@@ -55,8 +56,8 @@ void nozzle_init() {
 	double delta_x = 0.1; //x长度
 	double delta_x_reciprocal = 1 / delta_x;
 	double Courant_value = 0.5;//Courant数
-	int time_step_total = 1400;//总时间步
-	double gama_air = 1.4; //空气的γ 1.4
+	size_t time_step_total = 20;//总时间步
+	double gama_air = 1.4; //空气的γ 1.4	
 	map<string, double> point_0 = {
 		{"x_value",0},//x方向的值
 		{"A",0},//无量纲宽度
@@ -77,7 +78,7 @@ void nozzle_init() {
 	//给计算的初始条件和边界条件
 	// 边界rho0 = 1 T0 = 1
 	// 初始rho = 1-0.3146x T = 1-0.2314x u = (0.1+1.09x)*(T^1/2)
-	//初始化数据结构
+	//初始化数据结构 vector里装map的数据结构,语义化最好
 	vector < map<string, double> > param_Vec(point_x, point_0);
 	//计算每一点的A和x_value
 	vector< map<string, double> > ::iterator it = param_Vec.begin();
@@ -112,10 +113,10 @@ void nozzle_init() {
 			double u_difference_pre = (u_next - u_this) * delta_x_reciprocal;//u前差
 			double T_difference_pre = (T_next - T_this) * delta_x_reciprocal;//T前差
 			double rho_difference_pre = (rho_next - rho_this) * delta_x_reciprocal;//rho前差
-			double ln_a_difference_pre = (log(A_next / A_this)) * delta_x_reciprocal;//ln A前差
+			double ln_A_difference_pre = (log(A_next / A_this)) * delta_x_reciprocal;//ln A前差
 			//计算偏rho偏t预测值 rho预测量
 			double pd_rho_t_pre = -rho_this * u_difference_pre
-				- rho_this * u_this * ln_a_difference_pre
+				- rho_this * u_this * ln_A_difference_pre
 				- u_this * rho_difference_pre;
 			double rho_t_pre = rho_this + pd_rho_t_pre * t_step;
 			//计算偏u偏t预测值 u预测量
@@ -123,7 +124,7 @@ void nozzle_init() {
 				- (1 / gama_air) * (T_difference_pre + T_this / rho_this * rho_difference_pre);
 			double u_t_pre = u_this + pd_u_t_pre * t_step;
 			//计算偏T偏t预测值 T预测量
-			double pd_T_t_pre = -u_this * T_difference_pre - (gama_air - 1) * T_this * (u_difference_pre + u_this * ln_a_difference_pre);
+			double pd_T_t_pre = -u_this * T_difference_pre - (gama_air - 1) * T_this * (u_difference_pre + u_this * ln_A_difference_pre);
 			double T_t_pre = T_this + pd_T_t_pre * t_step;
 			//存入vector<map>中,去计算修正步
 			param_Vec[j]["pd_rho_t_pre"] = pd_rho_t_pre;
@@ -136,7 +137,7 @@ void nozzle_init() {
 		// rho和T已知,预测值改回真实值
 		param_Vec[0]["T_t_pre"] = 1;
 		param_Vec[0]["rho_t_pre"] = 1;
-		for (size_t k = 1; k < point_x - 1; k++) {//k=0无后差,k=30后差无意义
+		for (size_t k = 1; k < point_x - 1; k++) {//k=0无后差,k=max后差无意义
 			//计算修正步和最终结果命名方式同预测步
 			double pd_rho_t_pre = param_Vec[k]["pd_rho_t_pre"];
 			double pd_u_t_pre = param_Vec[k]["pd_u_t_pre"];
@@ -156,14 +157,14 @@ void nozzle_init() {
 
 			double A_this = param_Vec[k]["A"];//A_i_t
 			double A_last = param_Vec[k - 1]["A"];//A_i+1_t
-			double ln_a_difference_pre = (log(A_this / A_last)) * delta_x_reciprocal;//ln A后差
+			double ln_A_difference_pre = (log(A_this / A_last)) * delta_x_reciprocal;//ln A后差
 			//计算修正值
 			double pd_rho_t_cor = -rho_t_pre_this * u_t_pre_difference_cor
-				- rho_t_pre_this * u_t_pre_this * ln_a_difference_pre
+				- rho_t_pre_this * u_t_pre_this * ln_A_difference_pre
 				- u_t_pre_this * rho_t_pre_difference_cor;
 			double pd_u_t_cor = -u_t_pre_this * u_t_pre_difference_cor
 				- (1 / gama_air) * (T_t_pre_difference_cor + (T_t_pre_this / rho_t_pre_this) * rho_t_pre_difference_cor);
-			double pd_T_t_cor = -u_t_pre_this * T_t_pre_difference_cor - (gama_air - 1) * T_t_pre_this * (u_t_pre_difference_cor + u_t_pre_this * ln_a_difference_pre);
+			double pd_T_t_cor = -u_t_pre_this * T_t_pre_difference_cor - (gama_air - 1) * T_t_pre_this * (u_t_pre_difference_cor + u_t_pre_this * ln_A_difference_pre);
 			//预测与修正的平均值
 			double pd_rho_t_average = (pd_rho_t_cor + pd_rho_t_pre) / 2;
 			double pd_u_t_average = (pd_u_t_cor + pd_u_t_pre) / 2;
