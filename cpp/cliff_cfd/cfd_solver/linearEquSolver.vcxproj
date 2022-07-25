@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\code\cfd\cpp\sw\vcpkg\installed\x86-windows\include;C:\Python27\include;C:\Python27\Lib\site-packages\numpy\core\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\code\cfd\cpp\sw\vcpkg\installed\x86-windows\include;D:\code\cfd\cpp\sw\vcpkg\installed\x86-windows\include;D:\code\cfd\cpp\sw\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>

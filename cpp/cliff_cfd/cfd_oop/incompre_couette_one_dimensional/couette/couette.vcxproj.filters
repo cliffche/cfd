@@ -15,28 +15,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sales_data.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="quote.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="bulk_quote.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="disc_quote.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <ClCompile Include="..\incompre_couette_one_dimensional.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="sales_data.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="quote.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="bulk_quote.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+    <ClInclude Include="..\incompre_couette_one_dimensional.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="couette.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tdma.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a5f4b9fc-b03e-4bb6-91a3-ba7def2c311c}</ProjectGuid>
-    <RootNamespace>oop</RootNamespace>
+    <ProjectGuid>{5d4157b9-c995-4ebd-9db6-17897130519e}</ProjectGuid>
+    <RootNamespace>couette</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,15 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="bulk_quote.h" />
-    <ClInclude Include="disc_quote.h" />
-    <ClInclude Include="quote.h" />
-    <ClInclude Include="sales_data.h" />
+    <ClCompile Include="..\incompre_couette_one_dimensional.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bulk_quote.cpp" />
-    <ClCompile Include="quote.cpp" />
-    <ClCompile Include="sales_data.cpp" />
+    <ClInclude Include="..\incompre_couette_one_dimensional.h" />
+    <ClInclude Include="couette.h" />
+    <ClInclude Include="tdma.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

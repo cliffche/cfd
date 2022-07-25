@@ -16,9 +16,6 @@ private:
 	double discount = 0.0;
 
 };
-
-
-
 double Bulk_quote::net_price(std::size_t t) const {//有const和没有const也是重载
 	return t * discount;
 }

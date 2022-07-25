@@ -11,7 +11,9 @@ public:
 	virtual double net_price(size_t n) const { return n * price; }
 
 	virtual ~Quote() = default;
-
+	static string date() {
+		return "1453-1-1";
+	};
 private:
 	string bookNo;
 protected:
