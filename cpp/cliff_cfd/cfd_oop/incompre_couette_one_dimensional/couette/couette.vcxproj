@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClInclude Include="..\incompre_couette_one_dimensional.h" />
     <ClInclude Include="couette.h" />
+    <ClInclude Include="solver.h" />
     <ClInclude Include="tdma.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -29,5 +29,8 @@
     <ClInclude Include="tdma.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="solver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

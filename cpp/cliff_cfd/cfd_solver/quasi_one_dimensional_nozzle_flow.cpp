@@ -1,26 +1,8 @@
 #include <iostream>
 #include <math.h>
 #include <map>
-#include <array>
 #include <vector>
-
 using namespace std;
-//void nozzle_solver(int point_x) {
-//
-//	double A;//无量纲宽度
-//	double rho;//无量纲密度
-//	double T;//无量纲温度	
-//	double u;//无量纲速度
-//	double pd_rho_t_pre;//偏rho偏t预测值
-//	double pd_u_t_pre;//偏u偏t预测值
-//	double pd_T_t_pre;//偏T偏t预测值
-//	double rho_t_pre;//rho预测量
-//	double u_t_pre;//u预测量
-//	double T_t_pre;//T预测量
-//	double pd_rho_t_cor;//偏rho偏t修正值
-//	double pd_u_t_cor;//偏u偏t修正值
-//	double pd_T_t_cor;//偏T偏t修正值
-//}
 
 //A与x的映射关系
 double calculate_A_value(double x) {
@@ -78,7 +60,7 @@ void nozzle_init() {
 	//给计算的初始条件和边界条件
 	// 边界rho0 = 1 T0 = 1
 	// 初始rho = 1-0.3146x T = 1-0.2314x u = (0.1+1.09x)*(T^1/2)
-	//初始化数据结构 vector里装map的数据结构,语义化最好
+	//初始化数据结构 vector里装map的数据结构,每一个map存储一个点当前的数据,语义化好,因为是显式推进,只需要存一个vector就可以了
 	vector < map<string, double> > param_Vec(point_x, point_0);
 	//计算每一点的A和x_value
 	vector< map<string, double> > ::iterator it = param_Vec.begin();
@@ -95,12 +77,11 @@ void nozzle_init() {
 		i++;
 		it++;
 	}
-	for (int t_i = 0; t_i < time_step_total; t_i++) {
-		//计算delta_t
-		cout << t_i << endl;
-		double t_step = time_step(&param_Vec, delta_x, Courant_value);
+	for (int timestep_i = 0; timestep_i < time_step_total; timestep_i++) {		
+		cout << timestep_i << endl;
+		double t_step = time_step(&param_Vec, delta_x, Courant_value);//计算delta_t
 		cout << "t_step= :" << t_step << endl;
-		for (size_t j = 0; j < point_x - 1; j++) {//j=30无前差
+		for (size_t j = 0; j < point_x - 1; j++) {//j=point_x - 1无前差
 			//因为是显式,所有的计算参数都是t时刻的,用next表示i+1点		
 			double A_this = param_Vec[j]["A"];//A_i_t
 			double A_next = param_Vec[j + 1]["A"];//A_i+1_t
@@ -134,7 +115,7 @@ void nozzle_init() {
 			param_Vec[j]["pd_T_t_pre"] = pd_T_t_pre;
 			param_Vec[j]["T_t_pre"] = T_t_pre;
 		}
-		// rho和T已知,预测值改回真实值
+		// rho_0和T_0已知,预测值改回真实值
 		param_Vec[0]["T_t_pre"] = 1;
 		param_Vec[0]["rho_t_pre"] = 1;
 		for (size_t k = 1; k < point_x - 1; k++) {//k=0无后差,k=max后差无意义
@@ -192,5 +173,4 @@ int main_temp() {
 /*
 优化方案
 1.用oop封装一个输出方法,输出美观易于调试
-
 */

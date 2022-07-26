@@ -20,7 +20,7 @@ dmat* solver_tdma_icod(dmat* a) {
 		vec_cache = { a->at(i,0),a->at(i,1), a->at(i,2), a->at(i,3) };//缓存a1 b1 c1 d1
 		//cout << *a << endl;
 		a->at(i, 0) = 0;//a2` = 0
-		//b2` = b1*b2 - a2*c1 实际迭代发现b2`必须化成1,因为过大的矩阵会导致后面的项溢出 a->at(i, 1) = (a->at(i - 1, 1)) * vec_cache.at(1) - vec_cache.at(0) * (a->at(i - 1, 2));
+		//b2` = b1*b2 - a2*c1 b2`必须化成1,因为过大的矩阵会导致后面的项溢出 a->at(i, 1) = (a->at(i - 1, 1)) * vec_cache.at(1) - vec_cache.at(0) * (a->at(i - 1, 2));
 		double b_temp = (a->at(i - 1, 1)) * vec_cache.at(1) - vec_cache.at(0) * (a->at(i - 1, 2));
 		a->at(i, 1) = 1;
 		a->at(i, 2) = vec_cache.at(2) * (a->at(i - 1, 1)) / b_temp;//c2` = b1 * c2 /(b1*b2 - a2*c1)
