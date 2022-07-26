@@ -7,7 +7,7 @@ class Solver
 public:
 	Solver();
 	virtual ~Solver();
-	virtual void solve() = 0;//´¿Ðé
+	virtual void solve() = 0;//´¿Ðéº¯Êý
 private:
 
 };
