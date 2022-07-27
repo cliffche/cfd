@@ -32,13 +32,14 @@ void cout_array_map(vector<map<string, double>>* vec) {
 }
 
 void nozzle_init() {
+	cout << "      " << "A" << "   " << "rho" << "   " << "u" << "   " << "T" << endl;
 	//构建数据结构和初始参数
-	const size_t point_x = 31;//网格节点数
+	const size_t point_qty = 31;//网格节点数
 	double x_len = 3; //x长度
 	double delta_x = 0.1; //x长度
 	double delta_x_reciprocal = 1 / delta_x;
 	double Courant_value = 0.5;//Courant数
-	size_t time_step_total = 20;//总时间步
+	size_t time_step_total = 1500;//总时间步
 	double gama_air = 1.4; //空气的γ 1.4	
 	map<string, double> point_0 = {
 		{"x_value",0},//x方向的值
@@ -55,13 +56,12 @@ void nozzle_init() {
 		{"pd_rho_t_cor",0},//偏rho偏t修正值
 		{"pd_u_t_cor",0},//偏u偏t修正值
 		{"pd_T_t_cor",0},//偏T偏t修正值
-
 	};
 	//给计算的初始条件和边界条件
 	// 边界rho0 = 1 T0 = 1
 	// 初始rho = 1-0.3146x T = 1-0.2314x u = (0.1+1.09x)*(T^1/2)
 	//初始化数据结构 vector里装map的数据结构,每一个map存储一个点当前的数据,语义化好,因为是显式推进,只需要存一个vector就可以了
-	vector < map<string, double> > param_Vec(point_x, point_0);
+	vector < map<string, double> > param_Vec(point_qty, point_0);
 	//计算每一点的A和x_value
 	vector< map<string, double> > ::iterator it = param_Vec.begin();
 	int i = 0;
@@ -77,11 +77,11 @@ void nozzle_init() {
 		i++;
 		it++;
 	}
-	for (int timestep_i = 0; timestep_i < time_step_total; timestep_i++) {		
+	for (int timestep_i = 0; timestep_i < time_step_total; timestep_i++) {
 		cout << timestep_i << endl;
 		double t_step = time_step(&param_Vec, delta_x, Courant_value);//计算delta_t
 		cout << "t_step= :" << t_step << endl;
-		for (size_t j = 0; j < point_x - 1; j++) {//j=point_x - 1无前差
+		for (size_t j = 0; j < point_qty - 1; j++) {//j=point_qty - 1无前差
 			//因为是显式,所有的计算参数都是t时刻的,用next表示i+1点		
 			double A_this = param_Vec[j]["A"];//A_i_t
 			double A_next = param_Vec[j + 1]["A"];//A_i+1_t
@@ -118,7 +118,7 @@ void nozzle_init() {
 		// rho_0和T_0已知,预测值改回真实值
 		param_Vec[0]["T_t_pre"] = 1;
 		param_Vec[0]["rho_t_pre"] = 1;
-		for (size_t k = 1; k < point_x - 1; k++) {//k=0无后差,k=max后差无意义
+		for (size_t k = 1; k < point_qty - 1; k++) {//k=0无后差,k=max后差无意义
 			//计算修正步和最终结果命名方式同预测步
 			double pd_rho_t_pre = param_Vec[k]["pd_rho_t_pre"];
 			double pd_u_t_pre = param_Vec[k]["pd_u_t_pre"];
@@ -157,18 +157,18 @@ void nozzle_init() {
 		}
 		//更新0点和最后一点的值 rho和T已知
 		param_Vec[0]["u"] = 2 * param_Vec[1]["u"] - param_Vec[2]["u"];
-		param_Vec[point_x - 1]["rho"] = 2 * param_Vec[point_x - 2]["rho"] - param_Vec[point_x - 3]["rho"];
-		param_Vec[point_x - 1]["u"] = 2 * param_Vec[point_x - 2]["u"] - param_Vec[point_x - 3]["u"];
-		param_Vec[point_x - 1]["T"] = 2 * param_Vec[point_x - 2]["T"] - param_Vec[point_x - 3]["T"];
+		param_Vec[point_qty - 1]["rho"] = 2 * param_Vec[point_qty - 2]["rho"] - param_Vec[point_qty - 3]["rho"];
+		param_Vec[point_qty - 1]["u"] = 2 * param_Vec[point_qty - 2]["u"] - param_Vec[point_qty - 3]["u"];
+		param_Vec[point_qty - 1]["T"] = 2 * param_Vec[point_qty - 2]["T"] - param_Vec[point_qty - 3]["T"];
 		cout_array_map(&param_Vec);
 	}
 }
 
-int main_temp() {
-	cout << "      " << "A" << "   " << "rho" << "   " << "u" << "   " << "T" << endl;
-	nozzle_init();
-	return 0;
-}
+//int main() {
+//	
+//	nozzle_init();
+//	return 0;
+//}
 
 /*
 优化方案

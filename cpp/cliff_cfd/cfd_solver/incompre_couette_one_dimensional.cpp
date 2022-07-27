@@ -36,34 +36,35 @@ dmat* solver_tdma_icod(dmat* a) {
 	return a;
 }
 
-void icod_solver(dmat* m_mat) {
-	//cout << *m_mat << endl;
-	dmat* b = solver_tdma_icod(*&m_mat);
-	cout.precision(13);
-	cout.setf(ios::fixed);
-	b->raw_print(cout, "b");
-	//cout << *b << endl;
-}
+//void icod_solver(dmat* m_mat) {
+//	//cout << *m_mat << endl;
+//	dmat* b = solver_tdma_icod(*&m_mat);
+//	cout.precision(13);
+//	cout.setf(ios::fixed);
+//	b->raw_print(cout, "b");
+//	//cout << *b << endl;
+//}
 
 //定义无量纲的计算条件和初始值
 void icod_init() {
-	const int delta_y = 19;//y方向网格(边界不在里面)
-	//构造参数E e = delta_t/(Re * (delta_y **2))
-	const int construct_parameter_E = 5;
-	//矩阵的参数A
+	const size_t total_mesh_y = 19;//y方向网格(边界不在里面)
+	const size_t total_time_step = 240;//计算步数
+	//构造参数E e = delta_t/(Re * (total_mesh_y **2))
+	const double construct_parameter_E = 5;
+	//矩阵的参数
 	double param_a = -0.5 * construct_parameter_E;//
 	double param_b = 1 + construct_parameter_E;
 	double param_c = param_a;
-	dmat mat(delta_y, 4);//以 n*4 的形式存储三对角矩阵的A和b
+	dmat mat(total_mesh_y, 4);//以 n*4 的形式存储三对角矩阵的A和b
 	//初始化条件,最后一点为1,其余为0
-	for (int i = 0; i < 240; i++) {
+	for (int i = 0; i < total_time_step; i++) {
 		cout << i << endl;
 		if (i == 0) {//第一次迭代,要给d列赋初始值
 			//通过链表给矩阵赋值
 			list<double> params_list = { param_a, param_b, param_c,0 };
 			list<double>::iterator  param_it = params_list.begin();
 			dmat::row_iterator row_it = mat.begin_row(0);
-			while (row_it != mat.end_row(delta_y - 1))
+			while (row_it != mat.end_row(total_mesh_y - 1))
 			{
 				*row_it = *param_it;
 				param_it++;
@@ -74,38 +75,43 @@ void icod_init() {
 			}
 			//修改第一行和最后一行
 			mat.at(0, 0) = 0;
-			mat.at(delta_y - 1, 2) = 0;
-			mat.at(delta_y - 1, 3) = construct_parameter_E * 0.5 - param_a;
+			mat.at(total_mesh_y - 1, 2) = 0;
+			mat.at(total_mesh_y - 1, 3) = construct_parameter_E * 0.5 - param_a;
 		}
 		else {//其他次迭代,d列根据前一次计算的结果给出
-			double* temp_last = new double(0);
-			double* temp_this = new double(0);
+			/*double* temp_last = new double(0);
+			double* temp_this = new double(0);*/
+			double temp_last = 0;
+			double temp_this = 0;
 			double point_three_first = mat.at(1, 3);//缓存u3
-			double point_three_last = mat.at(delta_y - 2, 3);//缓存u19
-			for (int i = 0; i < delta_y; i++) {
+			double point_three_last = mat.at(total_mesh_y - 2, 3);//缓存u19
+			for (int i = 0; i < total_mesh_y; i++) {
 				mat.at(i, 0) = param_a;
 				mat.at(i, 1) = param_b;
 				mat.at(i, 2) = param_c;
-				*temp_this = mat.at(i, 3);//缓存上一点的值
-				if (i != 0 && i != (delta_y - 1)) {
-					mat.at(i, 3) = (1 - construct_parameter_E) * *temp_this + 0.5 * construct_parameter_E * (mat.at(i + 1, 3) + *temp_last);
+				temp_this = mat.at(i, 3);//缓存上一点的值
+				if (i != 0 && i != (total_mesh_y - 1)) {
+					mat.at(i, 3) = (1 - construct_parameter_E) * temp_this + 0.5 * construct_parameter_E * (mat.at(i + 1, 3) + temp_last);
 				}
-				*temp_last = *temp_this;
+				temp_last = temp_this;
 			}
 			//处理首尾
 			//cout << "point_three_d" << point_three_first << endl;
-			mat.at(delta_y - 1, 3) = (1 - construct_parameter_E) * mat.at(delta_y - 1, 3) + 0.5 * construct_parameter_E * (point_three_last + 1) - param_a;
+			mat.at(total_mesh_y - 1, 3) = (1 - construct_parameter_E) * mat.at(total_mesh_y - 1, 3) + 0.5 * construct_parameter_E * (point_three_last + 1) - param_a;
 			mat.at(0, 3) = (1 - construct_parameter_E) * mat.at(0, 3) + 0.5 * construct_parameter_E * point_three_first;
 			mat.at(0, 0) = 0;
-			mat.at(delta_y - 1, 2) = 0;
+			mat.at(total_mesh_y - 1, 2) = 0;
 		}
-		cout << "mat last" << mat.at(delta_y - 1, 3) << endl;
-		cout << "mat before cal" << endl;
+		cout << "mat last" << mat.at(total_mesh_y - 1, 3) << endl;
+		//cout << "mat before cal" << endl;
+		//cout.precision(13);
+		//cout.setf(ios::fixed);
+		//mat.raw_print(cout, "mat before cal");
+		//cout << mat << endl;
+		dmat* b = solver_tdma_icod(&mat);
 		cout.precision(13);
 		cout.setf(ios::fixed);
-		mat.raw_print(cout, "b");
-		//cout << mat << endl;
-		icod_solver(&mat);
+		b->raw_print(cout, "mat after cal");
 	}
 }
 
