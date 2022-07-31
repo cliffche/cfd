@@ -1,3 +1,5 @@
+**2022.7.26**
+
 这个一个CFD软件开发的记录,从最简单的流动开始.
 
 已经完成
@@ -42,3 +44,10 @@ vcpkg install armadillo
 vcpkg integrate install
 ```
 
+**2022.8.1**
+
+使用oop重构了代码,路径位于\cliff_cfd\cfd_oop
+
+Refactored the code library by oop. The path is \cliff_cfd\cfd_oop.
+
+ 

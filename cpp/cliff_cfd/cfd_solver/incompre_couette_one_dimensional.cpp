@@ -32,7 +32,7 @@ dmat* solver_tdma_icod(dmat* a) {
 		a->at(j, 3) = a->at(j, 3) - a->at(j + 1, 3) * a->at(j, 2);
 		a->at(j, 2) = 0;
 	}
-	//cout << a->at(18, 3) << endl;
+	cout << *a << endl;
 	return a;
 }
 
@@ -48,9 +48,9 @@ dmat* solver_tdma_icod(dmat* a) {
 //定义无量纲的计算条件和初始值
 void icod_init() {
 	const size_t total_mesh_y = 19;//y方向网格(边界不在里面)
-	const size_t total_time_step = 240;//计算步数
+	const size_t total_time_step = 12;//计算步数
 	//构造参数E e = delta_t/(Re * (total_mesh_y **2))
-	const double construct_parameter_E = 5;
+	const double construct_parameter_E = 1.25;
 	//矩阵的参数
 	double param_a = -0.5 * construct_parameter_E;//
 	double param_b = 1 + construct_parameter_E;
@@ -103,11 +103,11 @@ void icod_init() {
 			mat.at(total_mesh_y - 1, 2) = 0;
 		}
 		cout << "mat last" << mat.at(total_mesh_y - 1, 3) << endl;
-		//cout << "mat before cal" << endl;
+		cout << "mat before cal" << endl;
 		//cout.precision(13);
 		//cout.setf(ios::fixed);
 		//mat.raw_print(cout, "mat before cal");
-		//cout << mat << endl;
+		cout << mat << endl;
 		dmat* b = solver_tdma_icod(&mat);
 		cout.precision(13);
 		cout.setf(ios::fixed);
