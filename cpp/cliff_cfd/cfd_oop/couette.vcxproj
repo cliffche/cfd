@@ -128,12 +128,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="couette.cpp" />
+    <ClCompile Include="maccormack.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="nozzle.cpp" />
     <ClCompile Include="tdma.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="couette.h" />
+    <ClInclude Include="maccormack.h" />
     <ClInclude Include="nozzle.h" />
     <ClInclude Include="tdma.h" />
   </ItemGroup>
