@@ -1,7 +1,8 @@
 #include "couette.h"
 #include "nozzle.h"
-
+#include "maccormack.h"
 int main() {
+	/*
 	//平板流动类
 	//Couette couette_solver(19, 240, 0.2, 64);
 	//couette_solver.solve();
@@ -11,5 +12,8 @@ int main() {
 	//nozzle_solver.cout_result();
 	nozzle_solver.solve();
 	// nozzle_solver.cout_result();
+	*/
+	Maccormack n_s_solver(20, 20);
+	std::cout << n_s_solver << std::endl;
 	return 0;
 }
