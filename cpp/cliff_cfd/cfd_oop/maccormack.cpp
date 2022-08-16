@@ -14,7 +14,7 @@ Maccormack::Maccormack(size_t mesh_x, size_t mesh_y) {
 	points = { mesh_x ,{mesh_y , p0} };
 }
 
-//output all points info by reload operator<<
+//print all points info by overload operator<<
 std::ostream& operator<<(std::ostream& os, Maccormack& mac) {
 	os << "(x,y)" << "\t";
 	std::map<std::string, double>::iterator it = mac.points[0][0].begin();
@@ -40,6 +40,7 @@ std::ostream& operator<<(std::ostream& os, Maccormack& mac) {
 	return os;
 }
 
+//计算t=0时刻的条件
 //params of t=0.0s
 void Maccormack::initial() {
 
@@ -51,18 +52,29 @@ void Maccormack::boundary() {
 void Maccormack::timestepCalculator() {
 
 }
+//maccormack推进
 void Maccormack::maccormackPush() {
 
 }
+//收敛判断
 void Maccormack::convergenceJudgement() {
 
 }
+//τxx计算
 void Maccormack::tau_xx_Calculator() {
 
 }
+//τxy计算
 void Maccormack::tau_xy_Calculator() {
 
 }
+//τyy计算
 void Maccormack::tau_yy_Calculator() {
 
+}
+
+void Maccormack::q_x_Calculator() {
+
+}
+void Maccormack::q_y_Calculator() {
 }

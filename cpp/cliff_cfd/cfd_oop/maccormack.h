@@ -17,13 +17,20 @@ public:
 
 private:
 	std::vector<std::vector<map_point>> points;
+	size_t total_timestep = 1000;
+	double courant = 0.7;//courant number
+	double gama = 1.4;//gama default air
+	double pr = 0.71;//prandtl number
+	double R_gas_constant = 287;//gas constant 
+
 	void timestepCalculator();//calTimeStep
 	void maccormackPush();//cal n+1 value by maccormack method
 	void convergenceJudgement();//judge whether the residuals convergence
 	void tau_xx_Calculator();//calculate tau_xx 
 	void tau_xy_Calculator();//calculate tau_xx 
 	void tau_yy_Calculator();//calculate tau_xx 
-
+	void q_x_Calculator();
+	void q_y_Calculator();
 };
 std::ostream& operator<<(std::ostream&, Maccormack&);
 #endif // !_MACCORMACK_H_
