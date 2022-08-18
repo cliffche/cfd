@@ -26,7 +26,11 @@ private:
 	double Cv = 4.18;//default cv
 	double pr = 0.71;//prandtl number
 	double R_gas_constant = 287.0;//gas constant 
-	double T0 = 298.15;
+	double T_0 = 298.15;
+	double mu_0 = 1;
+	double delta_t = 1;
+	double delta_x = 1;
+	double delta_y = 1;
 
 	void timestepCalculator();//calTimeStep
 	void maccormackPush();//cal n+1 value by maccormack method
@@ -43,6 +47,8 @@ private:
 	void pd_u_t_backward_Calculator();//
 	void pd_v_t_forward_Calculator();//
 	void pd_v_t_backward_Calculator();//
+	void pd_e_t_forward_Calculator();//
+	void pd_e_t_backward_Calculator();//
 };
 std::ostream& operator<<(std::ostream&, Maccormack&);
 #endif // !_MACCORMACK_H_

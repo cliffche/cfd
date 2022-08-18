@@ -1,11 +1,11 @@
 #include "maccormack.h"
 #include <ostream>
-
+#include "math.h"
 //Constructor create all points by mesh qty of x coordinate & y coordinate
 Maccormack::Maccormack(size_t mesh_x, size_t mesh_y) : mesh_x(mesh_x), mesh_y(mesh_y) {
-	//variable from 'rho' to 'k' is the base variable to be solved	
+	//variable from 'rho' to 'e' is the base variable to be solved	
 	std::vector<std::string> params = {
-		"rho","u","v","mod_V","p","T","e","mu","k","tau_xx","tau_xy","tau_yy","Et","q_x","q_y","D_rho_x_forward",
+		"rho","u","v","e","mod_V","p","T","mu","k","tau_xx","tau_xy","tau_yy","Et","q_x","q_y","D_rho_x_forward",
 		"D_rho_y_forward","D_u_x_forward","D_u_y_forward","D_rho_x_backward","D_rho_y_backward","D_u_x_backward","D_u_y_backward",
 		"D_rho_t_forward","D_rho_t_backward"
 	};
@@ -54,7 +54,26 @@ void Maccormack::boundary() {
 
 }
 void Maccormack::timestepCalculator() {
-
+	double v_ = 0;
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double v_temp = mu_0 * pow(p_this["T"] / T_0, 3) * pow((T_0 + 110) / (p_this["T"] + 110), 2) * gama * pr;
+			v_ = std::max(v_temp, v_);
+		}
+	}
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double a_ = std::sqrt(gama * R_gas_constant * p_this["T"]);
+			double temp_ = 1.0 / pow(delta_x, 2) + 1.0 / pow(delta_y, 2);
+			double delta_t_temp = 1.0 / (std::abs(p_this["u"]) / delta_x + std::abs(p_this["v"]) / delta_y) + a_ * std::sqrt(temp_)
+				+ 2 * v_ * (temp_);
+			delta_t = std::min(courant * delta_t_temp, delta_t);
+		}
+	}
 }
 //maccormackÍÆ½ø
 void Maccormack::maccormackPush() {
@@ -107,17 +126,72 @@ void Maccormack::pd_rho_t_backward_Calculator() {
 	}
 }
 
+//temporarily program invis equation 
 void Maccormack::pd_u_t_forward_Calculator() {
-
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double D_u_t_forward = -(p_this["u"] * p_this["D_u_x_forward"] + p_this["v"] * p_this["D_u_y_forward"]
+				+ 1.0 / p_this["rho"] * p_this["D_p_x_forward"]);
+			p_this["D_u_t_forward"] = D_u_t_forward;
+		}
+	}
 }
 void Maccormack::pd_u_t_backward_Calculator() {
-
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double D_u_t_backward = -(p_this["u"] * p_this["D_u_x_backward"] + p_this["v"] * p_this["D_u_y_backward"]
+				+ 1.0 / p_this["rho"] * p_this["D_p_x_backward"]);
+			p_this["D_u_t_backward"] = D_u_t_backward;
+		}
+	}
 }
 void Maccormack::pd_v_t_forward_Calculator() {
-
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double D_v_t_forward = -(p_this["v"] * p_this["D_v_x_forward"] + p_this["u"] * p_this["D_v_y_forward"]
+				+ 1.0 / p_this["rho"] * p_this["D_p_y_forward"]);
+			p_this["D_v_t_forward"] = D_v_t_forward;
+		}
+	}
 }
 void Maccormack::pd_v_t_backward_Calculator() {
-
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double D_v_t_backward = -(p_this["v"] * p_this["D_v_x_backward"] + p_this["u"] * p_this["D_v_y_backward"]
+				+ 1.0 / p_this["rho"] * p_this["D_p_y_backward"]);
+			p_this["D_v_t_backward"] = D_v_t_backward;
+		}
+	}
+}
+void Maccormack::pd_e_t_forward_Calculator() {
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double D_e_t_forward = -(p_this["p"] / p_this["rho"] * (p_this["D_u_x_forward"] + p_this["D_v_y_forward"]) + p_this["u"] * p_this["D_e_x_forward"]
+				+ p_this["v"] * p_this["D_e_y_forward"]);
+			p_this["D_e_t_forward"] = D_e_t_forward;
+		}
+	}
+}
+void Maccormack::pd_e_t_backward_Calculator() {
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			map_point& p_this = points[i][j];
+			double D_e_t_backward = -(p_this["p"] / p_this["rho"] * (p_this["D_u_x_backward"] + p_this["D_v_y_backward"]) + p_this["u"] * p_this["D_e_x_backward"]
+				+ p_this["v"] * p_this["D_e_y_backward"]);
+			p_this["D_e_t_backward"] = D_e_t_backward;
+		}
+	}
 }
 
 void Maccormack::basic_pd_Calculator() {
@@ -131,19 +205,38 @@ void Maccormack::basic_pd_Calculator() {
 			map_point& p_next_y = points[i][j + 1];
 			double D_rho_x_forward = (p_next_x["rho"] - p_this["rho"]) / dx;
 			p_this["D_rho_x_forward"] = D_rho_x_forward;
-			double D_rho_y_forward = (p_next_y["rho"] - p_this["rho"]) / dx;
-			p_this["D_rho_y_forward"] = D_rho_x_forward;
-			double D_u_x_forward = (p_next_x["u"] - p_this["u"]) / dx;
-			p_this["D_u_x_forward"] = D_rho_x_forward;
-			double D_u_y_forward = (p_next_y["u"] - p_this["u"]) / dx;
-			p_this["D_u_y_forward"] = D_rho_x_forward;
+			double D_rho_y_forward = (p_next_y["rho"] - p_this["rho"]) / dy;
+			p_this["D_rho_y_forward"] = D_rho_y_forward;
 			double D_rho_x_backward = (p_this["rho"] - p_pre_x["rho"]) / dx;
-			p_this["D_rho_x_backward"] = D_rho_x_forward;
-			double D_rho_y_backward = (p_this["rho"] - p_pre_y["rho"]) / dx;
-			p_this["D_rho_y_backward"] = D_rho_x_forward;
+			p_this["D_rho_x_backward"] = D_rho_x_backward;
+			double D_rho_y_backward = (p_this["rho"] - p_pre_y["rho"]) / dy;
+			p_this["D_rho_y_backward"] = D_rho_y_backward;
+
+			double D_u_x_forward = (p_next_x["u"] - p_this["u"]) / dx;
+			p_this["D_u_x_forward"] = D_u_x_forward;
+			double D_u_y_forward = (p_next_y["u"] - p_this["u"]) / dy;
+			p_this["D_u_y_forward"] = D_u_y_forward;
 			double D_u_x_backward = (p_this["u"] - p_pre_x["u"]) / dx;
-			p_this["D_u_x_backward"] = D_rho_x_forward;
-			double D_u_y_backward = (p_this["u"] - p_pre_y["u"]) / dx;
-			p_this["D_u_y_backward"] = D_rho_x_forward;
+			p_this["D_u_x_backward"] = D_u_x_backward;
+			double D_u_y_backward = (p_this["u"] - p_pre_y["u"]) / dy;
+			p_this["D_u_y_backward"] = D_u_y_backward;
+
+			double D_p_x_forward = (p_this["p"] - p_pre_x["p"]) / dx;
+			p_this["D_p_x_forward"] = D_p_x_forward;
+			double D_p_y_forward = (p_this["p"] - p_pre_y["p"]) / dy;
+			p_this["D_p_y_forward"] = D_p_y_forward;
+			double D_p_x_backward = (p_this["p"] - p_pre_x["p"]) / dx;
+			p_this["D_p_x_backward"] = D_p_x_backward;
+			double D_p_y_backward = (p_this["p"] - p_pre_y["p"]) / dy;
+			p_this["D_p_y_backward"] = D_p_y_backward;
+
+			double D_e_x_forward = (p_this["e"] - p_pre_x["e"]) / dx;
+			p_this["D_e_x_forward"] = D_e_x_forward;
+			double D_e_y_forward = (p_this["e"] - p_pre_y["e"]) / dy;
+			p_this["D_e_y_forward"] = D_e_y_forward;
+			double D_e_x_backward = (p_this["e"] - p_pre_x["e"]) / dx;
+			p_this["D_e_x_backward"] = D_e_x_backward;
+			double D_e_y_backward = (p_this["e"] - p_pre_y["e"]) / dy;
+			p_this["D_e_y_backward"] = D_e_y_backward;
 		}
 	}
