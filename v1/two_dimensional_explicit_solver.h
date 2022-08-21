@@ -41,14 +41,15 @@ private:
 	void q_x_Calculator();
 	void q_y_Calculator();
 	inline double pd_rho_t_forward_Calculator(map_point&);//calculate front pd rho/pd t
-	void pd_rho_t_backward_Calculator();//calculate front pd rho/pd t
-	void basic_pd_Calculator();//
-	void pd_u_t_forward_Calculator();//
-	void pd_u_t_backward_Calculator();//
-	void pd_v_t_forward_Calculator();//
-	void pd_v_t_backward_Calculator();//
-	void pd_e_t_forward_Calculator();//
-	void pd_e_t_backward_Calculator();//
+	inline double pd_rho_t_backward_Calculator(map_point&);//calculate front pd rho/pd t	
+	inline double pd_u_t_forward_Calculator(map_point&);//
+	inline double pd_u_t_backward_Calculator(map_point&);//
+	inline double pd_v_t_forward_Calculator(map_point&);//
+	inline double pd_v_t_backward_Calculator(map_point&);//
+	inline double pd_e_t_forward_Calculator(map_point&);//
+	inline double pd_e_t_backward_Calculator(map_point&);//
+	void basic_pd_forward_Calculator();
+	void basic_pd_backward_Calculator();//
 };
 std::ostream& operator<<(std::ostream&, Maccormack&);
 #endif // !_MACCORMACK_H_
