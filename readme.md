@@ -48,6 +48,6 @@ vcpkg integrate install
 
 使用oop重构了代码,路径位于\cliff_cfd\cfd_oop
 
-Refactored the code library by oop. The path is \cliff_cfd\cfd_oop.
+Refactored the code library by oop. The path is \cfd\v1
 
  
