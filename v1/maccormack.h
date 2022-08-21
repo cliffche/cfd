@@ -40,7 +40,7 @@ private:
 	void tau_yy_Calculator();//calculate tau_xx 
 	void q_x_Calculator();
 	void q_y_Calculator();
-	void pd_rho_t_forward_Calculator();//calculate front pd rho/pd t
+	inline double pd_rho_t_forward_Calculator(map_point&);//calculate front pd rho/pd t
 	void pd_rho_t_backward_Calculator();//calculate front pd rho/pd t
 	void basic_pd_Calculator();//
 	void pd_u_t_forward_Calculator();//

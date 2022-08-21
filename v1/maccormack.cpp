@@ -77,6 +77,27 @@ void Maccormack::timestepCalculator() {
 }
 //maccormack推进
 void Maccormack::maccormackPush() {
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++)
+		{
+			//
+			basic_pd_Calculator();
+			timestepCalculator();
+			map_point& p_this = points[i][j];
+			//predict step
+			double pd_rho_t_forward = pd_rho_t_forward_Calculator(p_this);
+			double rho_predict = p_this["rho"] + pd_rho_t_forward;
+
+
+			pd_u_t_forward_Calculator();
+			pd_v_t_forward_Calculator();
+			pd_e_t_forward_Calculator();
+			//correct step
+
+		}
+	}
+
+
 
 }
 //收敛判断
@@ -103,16 +124,10 @@ void Maccormack::q_x_Calculator() {
 void Maccormack::q_y_Calculator() {
 }
 //偏rho偏t前差
-void Maccormack::pd_rho_t_forward_Calculator() {
-	for (size_t i = 1; i < mesh_x - 1; i++) {
-		for (size_t j = 1; j < mesh_y - 1; j++)
-		{
-			map_point& p_this = points[i][j];
-			double D_rho_t_forward = -(p_this["u"] * p_this["D_rho_x_forward"] + p_this["rho"] * (p_this["D_u_x_forward"] * p_this["D_u_y_forward"])
-				+ p_this["v"] * p_this["D_rho_y_forward"]);
-			p_this["D_rho_t_forward"] = D_rho_t_forward;
-		}
-	}
+double Maccormack::pd_rho_t_forward_Calculator(map_point& p_this) {
+	double D_rho_t_forward = -(p_this["u"] * p_this["D_rho_x_forward"] + p_this["rho"] * (p_this["D_u_x_forward"] * p_this["D_u_y_forward"])
+		+ p_this["v"] * p_this["D_rho_y_forward"]);
+	return D_rho_t_forward;
 }
 void Maccormack::pd_rho_t_backward_Calculator() {
 	for (size_t i = 1; i < mesh_x - 1; i++) {
@@ -240,3 +255,4 @@ void Maccormack::basic_pd_Calculator() {
 			p_this["D_e_y_backward"] = D_e_y_backward;
 		}
 	}
+}
