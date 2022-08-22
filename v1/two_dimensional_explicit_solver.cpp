@@ -46,12 +46,24 @@ std::ostream& operator<<(std::ostream& os, Maccormack& mac) {
 
 //计算t=0时刻的条件
 //params of t=0.0s
-void Maccormack::initial() {
+void Maccormack::setInitial() {
 
 }
 //boundary conditions
-void Maccormack::boundary() {
+void Maccormack::setBoundary(double T_wall, double T_infinity, double p_infinity) {
+	double e_wall = Cv * T_wall;
+	double e_infinity = Cv * T_infinity;
+	double rhp_infinity = p_infinity / (R_gas_constant * T_infinity);
+	for (size_t i = 1; i < mesh_y - 1; i++) {
+		points[0][i]["u"] = 0;
+		points[0][i]["v"] = 0;
+		points[0][i]["e"] = e_wall;
 
+		points[mesh_x - 1][i]["u"] = 0;
+		points[mesh_x - 1][i]["v"] = 0;
+		points[mesh_x - 1][i]["e"] = e_infinity;
+		points[mesh_x - 1][i]["rho"] = p_infinity;
+	}
 }
 void Maccormack::timestepCalculator() {
 	double v_ = 0;
@@ -128,24 +140,18 @@ void Maccormack::maccormackPush() {
 }
 //收敛判断
 void Maccormack::convergenceJudgement() {
-
 }
 
 //τxx计算
 void Maccormack::tau_xx_Calculator() {
-
 }
 //τxy计算
 void Maccormack::tau_xy_Calculator() {
-
 }
 //τyy计算
 void Maccormack::tau_yy_Calculator() {
-
 }
-
 void Maccormack::q_x_Calculator() {
-
 }
 void Maccormack::q_y_Calculator() {
 }

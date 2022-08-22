@@ -12,9 +12,8 @@ class Maccormack
 public:
 	Maccormack(size_t, size_t);
 	friend std::ostream& operator<<(std::ostream&, Maccormack&);
-	void initial();//initialization condition
-	void boundary();//boundary conditions
-
+	void setInitial();//initialization condition
+	void setBoundary(double, double, double);//boundary conditions
 private:
 	std::vector<std::vector<map_point>> points;
 	size_t total_timestep = 1000;
@@ -31,15 +30,9 @@ private:
 	double delta_t = 1;
 	double delta_x = 1;
 	double delta_y = 1;
-
 	void timestepCalculator();//calTimeStep
 	void maccormackPush();//cal n+1 value by maccormack method
 	void convergenceJudgement();//judge whether the residuals convergence
-	void tau_xx_Calculator();//calculate tau_xx 
-	void tau_xy_Calculator();//calculate tau_xx 
-	void tau_yy_Calculator();//calculate tau_xx 
-	void q_x_Calculator();
-	void q_y_Calculator();
 	inline double pd_rho_t_forward_Calculator(map_point&);//calculate front pd rho/pd t
 	inline double pd_rho_t_backward_Calculator(map_point&);//calculate front pd rho/pd t	
 	inline double pd_u_t_forward_Calculator(map_point&);//
@@ -50,6 +43,12 @@ private:
 	inline double pd_e_t_backward_Calculator(map_point&);//
 	void basic_pd_forward_Calculator();
 	void basic_pd_backward_Calculator();//
+	//TODOS
+	void tau_xx_Calculator();//calculate tau_xx 
+	void tau_xy_Calculator();//calculate tau_xx 
+	void tau_yy_Calculator();//calculate tau_xx 
+	void q_x_Calculator();
+	void q_y_Calculator();
 };
 std::ostream& operator<<(std::ostream&, Maccormack&);
 #endif // !_MACCORMACK_H_
