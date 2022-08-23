@@ -1,5 +1,5 @@
 #include "two_dimensional_explicit_solver.h"
-#include <ostream>
+#include <iostream>
 #include "math.h"
 //Constructor create all points by mesh qty of x coordinate & y coordinate
 Maccormack::Maccormack(size_t mesh_x, size_t mesh_y) : mesh_x(mesh_x), mesh_y(mesh_y) {
@@ -44,16 +44,24 @@ std::ostream& operator<<(std::ostream& os, Maccormack& mac) {
 	return os;
 }
 
+void Maccormack::master() {
+	if (!hasSetBC || !hasSetIC) {
+		std::cout << "has not set boundry conditions or initial conditions" << std::endl;
+		return;
+	}
+
+}
+
 //计算t=0时刻的条件
 //params of t=0.0s
 void Maccormack::setInitial() {
-
+	hasSetIC = true;
 }
 //boundary conditions
-void Maccormack::setBoundary(double T_wall, double T_infinity, double p_infinity) {
+void Maccormack::setBoundary(double T_wall, double T_infinity, double rho_infinity) {
 	double e_wall = Cv * T_wall;
 	double e_infinity = Cv * T_infinity;
-	double rhp_infinity = p_infinity / (R_gas_constant * T_infinity);
+	double p_infinity = rho_infinity * (R_gas_constant * T_infinity);
 	for (size_t i = 1; i < mesh_y - 1; i++) {
 		points[0][i]["u"] = 0;
 		points[0][i]["v"] = 0;
@@ -62,8 +70,12 @@ void Maccormack::setBoundary(double T_wall, double T_infinity, double p_infinity
 		points[mesh_x - 1][i]["u"] = 0;
 		points[mesh_x - 1][i]["v"] = 0;
 		points[mesh_x - 1][i]["e"] = e_infinity;
-		points[mesh_x - 1][i]["rho"] = p_infinity;
+		points[mesh_x - 1][i]["p"] = p_infinity;
+		points[mesh_x - 1][i]["rho"] = rho_infinity;
+
+
 	}
+	hasSetBC = true;
 }
 void Maccormack::timestepCalculator() {
 	double v_ = 0;

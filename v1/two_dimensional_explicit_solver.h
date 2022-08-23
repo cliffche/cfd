@@ -30,6 +30,10 @@ private:
 	double delta_t = 1;
 	double delta_x = 1;
 	double delta_y = 1;
+	bool hasSetIC = false;
+	bool hasSetBC = false;
+
+	void master();
 	void timestepCalculator();//calTimeStep
 	void maccormackPush();//cal n+1 value by maccormack method
 	void convergenceJudgement();//judge whether the residuals convergence
