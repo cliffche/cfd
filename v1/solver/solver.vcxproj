@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5d4157b9-c995-4ebd-9db6-17897130519e}</ProjectGuid>
-    <RootNamespace>couette</RootNamespace>
+    <ProjectGuid>{3b2469d7-350f-4563-a86f-39581666643e}</ProjectGuid>
+    <RootNamespace>solver</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\code\cfd\sw\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,17 +128,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="couette.cpp" />
-    <ClCompile Include="two_dimensional_explicit_solver.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="nozzle.cpp" />
-    <ClCompile Include="tdma.cpp" />
+    <ClCompile Include="..\main.cpp" />
+    <ClCompile Include="..\one_dimensional_solvers\couette.cpp" />
+    <ClCompile Include="..\one_dimensional_solvers\nozzle.cpp" />
+    <ClCompile Include="..\test_cases\tdes_test.cpp" />
+    <ClCompile Include="..\test_cases\test_case.cpp" />
+    <ClCompile Include="..\two_dimensional_solvers\two_dimensional_explicit_solver.cpp" />
+    <ClCompile Include="..\utils\tdma.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="couette.h" />
-    <ClInclude Include="two_dimensional_explicit_solver.h" />
-    <ClInclude Include="nozzle.h" />
-    <ClInclude Include="tdma.h" />
+    <ClInclude Include="..\one_dimensional_solvers\couette.h" />
+    <ClInclude Include="..\one_dimensional_solvers\nozzle.h" />
+    <ClInclude Include="..\test_cases\tdes_test.h" />
+    <ClInclude Include="..\test_cases\test_case.h" />
+    <ClInclude Include="..\two_dimensional_solvers\two_dimensional_explicit_solver.h" />
+    <ClInclude Include="..\utils\tdma.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

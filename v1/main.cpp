@@ -1,6 +1,4 @@
-#include "couette.h"
-#include "nozzle.h"
-#include "maccormack.h"
+#include <iostream>
 int main() {
 	/*
 	//平板流动类
@@ -13,7 +11,6 @@ int main() {
 	nozzle_solver.solve();
 	// nozzle_solver.cout_result();
 	*/
-	Maccormack n_s_solver(20, 20);
-	std::cout << n_s_solver << std::endl;
+
 	return 0;
 }

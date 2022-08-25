@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _COUETTE_H_
 #define _COUETTE_H_
-#include "tdma.h"
+#include "../utils/tdma.h"
 class Couette
 {
 public:

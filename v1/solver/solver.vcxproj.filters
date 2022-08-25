@@ -15,33 +15,45 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="tdma.cpp">
+    <ClCompile Include="..\one_dimensional_solvers\couette.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\one_dimensional_solvers\nozzle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="couette.cpp">
+    <ClCompile Include="..\test_cases\tdes_test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="nozzle.cpp">
+    <ClCompile Include="..\test_cases\test_case.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="maccormack.cpp">
+    <ClCompile Include="..\two_dimensional_solvers\two_dimensional_explicit_solver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\tdma.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="couette.h">
+    <ClInclude Include="..\utils\tdma.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="tdma.h">
+    <ClInclude Include="..\two_dimensional_solvers\two_dimensional_explicit_solver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="nozzle.h">
+    <ClInclude Include="..\one_dimensional_solvers\couette.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="maccormack.h">
+    <ClInclude Include="..\one_dimensional_solvers\nozzle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test_cases\tdes_test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test_cases\test_case.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

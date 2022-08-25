@@ -2,13 +2,13 @@
 #include <iostream>
 #include "math.h"
 //Constructor create all points by mesh qty of x coordinate & y coordinate
-Maccormack::Maccormack(size_t mesh_x, size_t mesh_y) : mesh_x(mesh_x), mesh_y(mesh_y) {
+Tdes::Tdes(size_t mesh_x, size_t mesh_y) : mesh_x(mesh_x), mesh_y(mesh_y) {
 	//variable from 'rho' to 'e' is the base variable to be solved	
 	std::vector<std::string> params = {
-		"rho","u","v","e","mod_V","p","T","mu","k","tau_xx","tau_xy","tau_yy","Et","q_x","q_y","D_rho_x_forward",
+		"rho","u","v","e","p","T","mod_V","mu","k","D_rho_x_forward",
 		"D_rho_y_forward","D_u_x_forward","D_u_y_forward","D_rho_x_backward","D_rho_y_backward","D_u_x_backward","D_u_y_backward",
 		"D_rho_t_forward","D_rho_t_backward"
-	};
+	};//"tau_xx","tau_xy","tau_yy","Et","q_x","q_y",
 	std::vector<std::string>::const_iterator itr = params.begin();
 	map_point p0;
 	while (itr != params.end()) {
@@ -19,7 +19,7 @@ Maccormack::Maccormack(size_t mesh_x, size_t mesh_y) : mesh_x(mesh_x), mesh_y(me
 }
 
 //print all points info by overload operator<<
-std::ostream& operator<<(std::ostream& os, Maccormack& mac) {
+std::ostream& operator<<(std::ostream& os, Tdes& mac) {
 	os << "(x,y)" << "\t";
 	std::map<std::string, double>::iterator it = mac.points[0][0].begin();
 	while (it != mac.points[0][0].end())
@@ -44,40 +44,94 @@ std::ostream& operator<<(std::ostream& os, Maccormack& mac) {
 	return os;
 }
 
-void Maccormack::master() {
+void Tdes::solve() {
 	if (!hasSetBC || !hasSetIC) {
 		std::cout << "has not set boundry conditions or initial conditions" << std::endl;
 		return;
 	}
-
+	size_t time_step_now = 0;
+	while (time_step_now < total_timestep) {
+		maccormackPush();
+		interpolationBundary();
+		time_step_now++;
+	}
 }
 
 //计算t=0时刻的条件
 //params of t=0.0s
-void Maccormack::setInitial() {
+void Tdes::setInitial() {
+	double e_infinity = Cv * T_infinity;
+	double rho_infinity = p_infinity / (R_gas_constant * T_infinity);
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		for (size_t j = 1; j < mesh_y - 1; j++) {
+			points[i][j]["u"] = u_infinity;
+			points[i][j]["v"] = 0;
+			points[i][j]["rho"] = rho_infinity;
+			points[i][j]["p"] = p_infinity;
+			points[i][j]["T"] = T_infinity;
+			points[i][j]["e"] = e_infinity;
+		}
+	}
 	hasSetIC = true;
 }
 //boundary conditions
-void Maccormack::setBoundary(double T_wall, double T_infinity, double rho_infinity) {
+void Tdes::setBoundary(double T_wall, double T_infinity, double p_infinity, double u_infinity) {
+
 	double e_wall = Cv * T_wall;
 	double e_infinity = Cv * T_infinity;
-	double p_infinity = rho_infinity * (R_gas_constant * T_infinity);
-	for (size_t i = 1; i < mesh_y - 1; i++) {
-		points[0][i]["u"] = 0;
-		points[0][i]["v"] = 0;
-		points[0][i]["e"] = e_wall;
+	double rho_infinity = p_infinity / (R_gas_constant * T_infinity);
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+		//bundary
+		points[i][0]["u"] = 0;
+		points[i][0]["v"] = 0;
+		points[i][0]["e"] = e_wall;
+		points[i][0]["T"] = T_wall;
+		//points[i][0]["p"] = e_wall;
+		//points[i][0]["rho"] = e_wall;
 
-		points[mesh_x - 1][i]["u"] = 0;
-		points[mesh_x - 1][i]["v"] = 0;
-		points[mesh_x - 1][i]["e"] = e_infinity;
-		points[mesh_x - 1][i]["p"] = p_infinity;
-		points[mesh_x - 1][i]["rho"] = rho_infinity;
-
-
+		points[i][mesh_x - 1]["u"] = u_infinity;
+		points[i][mesh_x - 1]["v"] = 0;
+		points[i][mesh_x - 1]["e"] = e_infinity;
+		points[i][mesh_x - 1]["p"] = p_infinity;
+		points[i][mesh_x - 1]["rho"] = rho_infinity;
+		points[i][mesh_x - 1]["T"] = T_infinity;
 	}
+	for (size_t j = 1; j < mesh_y - 1; j++) {
+		//bundary
+		points[0][j]["u"] = u_infinity;
+		points[0][j]["v"] = 0;
+		points[0][j]["e"] = e_infinity;
+		points[0][j]["p"] = p_infinity;
+		points[0][j]["rho"] = rho_infinity;
+		points[0][j]["T"] = T_infinity;
+	}
+	points[0][0]["u"] = 0;
+	points[0][0]["v"] = 0;
+	points[0][0]["rho"] = rho_infinity;
+	points[0][0]["e"] = e_infinity;
+	points[0][0]["T"] = T_infinity;
+	points[0][0]["p"] = p_infinity;
 	hasSetBC = true;
 }
-void Maccormack::timestepCalculator() {
+//interpolate to get boundaries
+void Tdes::interpolationBundary() {
+	for (size_t i = 1; i < mesh_x - 1; i++) {
+
+		points[i][0]["p"] = 2.0 * points[i][1]["p"] - points[i][2]["p"];
+		points[i][0]["rho"] = 2.0 * points[i][1]["rho"] - points[i][2]["rho"];
+		points[i][0]["e"] = 2.0 * points[i][1]["e"] - points[i][2]["e"];
+	}
+	for (size_t j = 1; j < mesh_y - 1; j++) {
+		points[mesh_x - 1][j]["p"] = 2.0 * points[mesh_x - 2][j]["p"] - points[mesh_x - 3][j]["p"];
+		points[mesh_x - 1][j]["u"] = 2.0 * points[mesh_x - 2][j]["u"] - points[mesh_x - 3][j]["u"];
+		points[mesh_x - 1][j]["v"] = 2.0 * points[mesh_x - 2][j]["v"] - points[mesh_x - 3][j]["v"];
+		points[mesh_x - 1][j]["rho"] = 2.0 * points[mesh_x - 2][j]["rho"] - points[mesh_x - 3][j]["rho"];
+		points[mesh_x - 1][j]["e"] = 2.0 * points[mesh_x - 2][j]["e"] - points[mesh_x - 3][j]["e"];
+		points[mesh_x - 1][j]["T"] = 2.0 * points[mesh_x - 2][j]["T"] - points[mesh_x - 3][j]["T"];
+	}
+}
+
+void Tdes::timestepCalculator() {
 	double v_ = 0;
 	for (size_t i = 1; i < mesh_x - 1; i++) {
 		for (size_t j = 1; j < mesh_y - 1; j++)
@@ -100,7 +154,7 @@ void Maccormack::timestepCalculator() {
 	}
 }
 //maccormack推进
-void Maccormack::maccormackPush() {
+void Tdes::maccormackPush() {
 	//predict step
 	timestepCalculator();
 	basic_pd_forward_Calculator();
@@ -150,73 +204,73 @@ void Maccormack::maccormackPush() {
 		}
 	}
 }
-//收敛判断
-void Maccormack::convergenceJudgement() {
+//收敛判断 todos
+void Tdes::convergenceJudgement() {
 }
 
 //τxx计算
-void Maccormack::tau_xx_Calculator() {
+void Tdes::tau_xx_Calculator() {
 }
 //τxy计算
-void Maccormack::tau_xy_Calculator() {
+void Tdes::tau_xy_Calculator() {
 }
 //τyy计算
-void Maccormack::tau_yy_Calculator() {
+void Tdes::tau_yy_Calculator() {
 }
-void Maccormack::q_x_Calculator() {
+void Tdes::q_x_Calculator() {
 }
-void Maccormack::q_y_Calculator() {
+void Tdes::q_y_Calculator() {
 }
 //偏rho偏t前差
-double Maccormack::pd_rho_t_forward_Calculator(map_point& p_this) {
+double Tdes::pd_rho_t_forward_Calculator(map_point& p_this) {
 	double D_rho_t_forward = -(p_this["u"] * p_this["D_rho_x_forward"] + p_this["rho"] * (p_this["D_u_x_forward"] * p_this["D_u_y_forward"])
 		+ p_this["v"] * p_this["D_rho_y_forward"]);
 	return D_rho_t_forward;
 }
-double Maccormack::pd_rho_t_backward_Calculator(map_point& p_this) {
+double Tdes::pd_rho_t_backward_Calculator(map_point& p_this) {
 	double D_rho_t_backward = -(p_this["u"] * p_this["D_rho_x_backward"] + p_this["rho"] * (p_this["D_u_x_backward"] * p_this["D_u_y_backward"])
 		+ p_this["v"] * p_this["D_rho_y_backward"]);
 	return D_rho_t_backward;
 }
 
 //temporarily program invis equation 
-double Maccormack::pd_u_t_forward_Calculator(map_point& p_this) {
+double Tdes::pd_u_t_forward_Calculator(map_point& p_this) {
 	double D_u_t_forward = -(p_this["u"] * p_this["D_u_x_forward"] + p_this["v"] * p_this["D_u_y_forward"]
 		+ 1.0 / p_this["rho"] * p_this["D_p_x_forward"]);
 	return D_u_t_forward;
 }
-double Maccormack::pd_u_t_backward_Calculator(map_point& p_this) {
+double Tdes::pd_u_t_backward_Calculator(map_point& p_this) {
 	double D_u_t_backward = -(p_this["u"] * p_this["D_u_x_backward"] + p_this["v"] * p_this["D_u_y_backward"]
 		+ 1.0 / p_this["rho"] * p_this["D_p_x_backward"]);
 	return D_u_t_backward;
 
 }
-double Maccormack::pd_v_t_forward_Calculator(map_point& p_this) {
+double Tdes::pd_v_t_forward_Calculator(map_point& p_this) {
 	double D_v_t_forward = -(p_this["v"] * p_this["D_v_x_forward"] + p_this["u"] * p_this["D_v_y_forward"]
 		+ 1.0 / p_this["rho"] * p_this["D_p_y_forward"]);
 	return D_v_t_forward;
 }
 
-double Maccormack::pd_v_t_backward_Calculator(map_point& p_this) {
+double Tdes::pd_v_t_backward_Calculator(map_point& p_this) {
 	double D_v_t_backward = -(p_this["v"] * p_this["D_v_x_backward"] + p_this["u"] * p_this["D_v_y_backward"]
 		+ 1.0 / p_this["rho"] * p_this["D_p_y_backward"]);
 	return D_v_t_backward;
 }
 
-double Maccormack::pd_e_t_forward_Calculator(map_point& p_this) {
+double Tdes::pd_e_t_forward_Calculator(map_point& p_this) {
 	double D_e_t_forward = -(p_this["p"] / p_this["rho"] * (p_this["D_u_x_forward"] + p_this["D_v_y_forward"]) + p_this["u"] * p_this["D_e_x_forward"]
 		+ p_this["v"] * p_this["D_e_y_forward"]);
 	return D_e_t_forward;
 }
 
-double Maccormack::pd_e_t_backward_Calculator(map_point& p_this) {
+double Tdes::pd_e_t_backward_Calculator(map_point& p_this) {
 
 	double D_e_t_backward = -(p_this["p"] / p_this["rho"] * (p_this["D_u_x_backward"] + p_this["D_v_y_backward"]) + p_this["u"] * p_this["D_e_x_backward"]
 		+ p_this["v"] * p_this["D_e_y_backward"]);
 	return D_e_t_backward;
 }
 
-void Maccormack::basic_pd_forward_Calculator() {
+void Tdes::basic_pd_forward_Calculator() {
 	for (size_t i = 1; i < mesh_x - 1; i++) {
 		for (size_t j = 1; j < mesh_y - 1; j++)
 		{
@@ -246,7 +300,7 @@ void Maccormack::basic_pd_forward_Calculator() {
 	}
 }
 
-void Maccormack::basic_pd_backward_Calculator() {
+void Tdes::basic_pd_backward_Calculator() {
 	for (size_t i = 1; i < mesh_x - 1; i++) {
 		for (size_t j = 1; j < mesh_y - 1; j++)
 		{
