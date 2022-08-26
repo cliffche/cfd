@@ -7,7 +7,7 @@ class TdesTest :public TestCase
 {
 public:
 	TdesTest();
-	void testCase() override;
+	void test() override;
 private:
 
 };

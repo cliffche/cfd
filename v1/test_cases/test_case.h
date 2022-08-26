@@ -6,7 +6,7 @@ class TestCase
 public:
 	TestCase() = default;
 	virtual ~TestCase();
-	void virtual testCase();
+	void virtual test() = 0;
 private:
 
 };
