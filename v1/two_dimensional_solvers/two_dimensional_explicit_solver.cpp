@@ -20,39 +20,41 @@ Tdes::Tdes(size_t mesh_x, size_t mesh_y) : mesh_x(mesh_x), mesh_y(mesh_y) {
 
 //print all points info by overload operator<<
 std::ostream& operator<<(std::ostream& os, Tdes& mac) {
-	os << "(x,y)" << "\t";
-	std::map<std::string, double>::iterator it = mac.points[0][0].begin();
-	while (it != mac.points[0][0].end())
+	int y_decrease = ceil(static_cast<double>(mac.mesh_y) / mac.maxOutputPoint_y);
+	int x_increase = ceil(static_cast<double>(mac.mesh_x) / mac.maxOutputPoint_x);
+	std::vector<std::string> li = { "u","e","T" };
+	std::vector<std::string>::const_iterator itr = li.begin();
+	while (itr != li.end())
 	{
-		os << it->first << "\t";
-		++it;
-	}
-	os << std::endl;
-	for (size_t i = 0; i < mac.points.size(); i++) {
-		for (size_t j = 0; j < mac.points[i].size(); j++) {
-			std::map<std::string, double>::iterator itr = mac.points[i][j].begin();
-			os << i << "," << j << "\t";
-			while (itr != mac.points[i][j].end())
-			{
-				os << itr->second << "\t";
-				++itr;
+		for (int j = mac.mesh_y - 1; j >= 0; j -= y_decrease) {
+			os << j << "\t";
+			for (size_t i = 0; i <= mac.mesh_x - 1; i += x_increase) {
+				os << mac.points[i][j][*itr] << "\t";
 			}
 			os << std::endl;
 		}
-		os << std::endl;
+		os << *itr << "\t";
+
+		for (size_t i = 0; i < mac.mesh_x; i += x_increase) {
+			os << i << "\t";
+		}
+		os << "\n" << std::endl;
+		itr++;
 	}
+	os << std::endl;
 	return os;
 }
 
-void Tdes::solve() {
-	if (!hasSetBC || !hasSetIC) {
-		std::cout << "has not set boundry conditions or initial conditions" << std::endl;
+void Tdes::solve(Tdes& tdes) {
+	if (!hasSetBC) {
+		std::cout << "has not set boundry conditions" << std::endl;
 		return;
 	}
 	size_t time_step_now = 0;
 	while (time_step_now < total_timestep) {
 		maccormackPush();
 		interpolationBundary();
+		std::cout << tdes << std::endl;
 		time_step_now++;
 	}
 }
@@ -72,7 +74,9 @@ void Tdes::setInitial() {
 			points[i][j]["e"] = e_infinity;
 		}
 	}
-	hasSetIC = true;
+	std::cout << "Set init" << std::endl;
+	std::cout << *this << std::endl;
+	//hasSetIC = true;
 }
 //boundary conditions
 void Tdes::setBoundary(double T_wall, double T_infinity, double p_infinity, double u_infinity) {
@@ -80,8 +84,13 @@ void Tdes::setBoundary(double T_wall, double T_infinity, double p_infinity, doub
 	double e_wall = Cv * T_wall;
 	double e_infinity = Cv * T_infinity;
 	double rho_infinity = p_infinity / (R_gas_constant * T_infinity);
-	for (size_t i = 1; i < mesh_x - 1; i++) {
-		//bundary
+	this->T_wall = T_wall;
+	this->T_infinity = T_infinity;
+	this->p_infinity = p_infinity;
+	this->u_infinity = u_infinity;
+	setInitial();
+	for (size_t i = 1; i <= mesh_x - 1; i++) {
+		//bottom bundary
 		points[i][0]["u"] = 0;
 		points[i][0]["v"] = 0;
 		points[i][0]["e"] = e_wall;
@@ -89,6 +98,7 @@ void Tdes::setBoundary(double T_wall, double T_infinity, double p_infinity, doub
 		//points[i][0]["p"] = e_wall;
 		//points[i][0]["rho"] = e_wall;
 
+		//up bundary
 		points[i][mesh_x - 1]["u"] = u_infinity;
 		points[i][mesh_x - 1]["v"] = 0;
 		points[i][mesh_x - 1]["e"] = e_infinity;
@@ -96,8 +106,8 @@ void Tdes::setBoundary(double T_wall, double T_infinity, double p_infinity, doub
 		points[i][mesh_x - 1]["rho"] = rho_infinity;
 		points[i][mesh_x - 1]["T"] = T_infinity;
 	}
-	for (size_t j = 1; j < mesh_y - 1; j++) {
-		//bundary
+	for (size_t j = 1; j <= mesh_y - 1; j++) {
+		//left bundary
 		points[0][j]["u"] = u_infinity;
 		points[0][j]["v"] = 0;
 		points[0][j]["e"] = e_infinity;
@@ -111,6 +121,10 @@ void Tdes::setBoundary(double T_wall, double T_infinity, double p_infinity, doub
 	points[0][0]["e"] = e_infinity;
 	points[0][0]["T"] = T_infinity;
 	points[0][0]["p"] = p_infinity;
+
+	interpolationBundary();
+	std::cout << "Set boundary" << std::endl;
+	std::cout << *this << std::endl;
 	hasSetBC = true;
 }
 //interpolate to get boundaries
@@ -137,29 +151,31 @@ void Tdes::timestepCalculator() {
 		for (size_t j = 1; j < mesh_y - 1; j++)
 		{
 			map_point& p_this = points[i][j];
-			double v_temp = mu_0 * pow(p_this["T"] / T_0, 3) * pow((T_0 + 110) / (p_this["T"] + 110), 2) * gama * pr;
+			double v_temp = pow(mu_0, 2) * pow(p_this["T"] / T_0, 3) * pow((T_0 + 110) / (p_this["T"] + 110), 2) * gama * pr * 4.0 / (3.0 * p_this["rho"]);
 			v_ = std::max(v_temp, v_);
 		}
 	}
+	//std::cout << " v_" << v_ << std::endl;
 	for (size_t i = 1; i < mesh_x - 1; i++) {
 		for (size_t j = 1; j < mesh_y - 1; j++)
 		{
 			map_point& p_this = points[i][j];
 			double a_ = std::sqrt(gama * R_gas_constant * p_this["T"]);
-			double temp_ = 1.0 / pow(delta_x, 2) + 1.0 / pow(delta_y, 2);
-			double delta_t_temp = 1.0 / (std::abs(p_this["u"]) / delta_x + std::abs(p_this["v"]) / delta_y) + a_ * std::sqrt(temp_)
-				+ 2 * v_ * (temp_);
-			delta_t = std::min(courant * delta_t_temp, delta_t);
+			double temp_ = 1.0 / pow(dx, 2) + 1.0 / pow(dy, 2);
+			double delta_t_temp = 1.0 / (std::abs(p_this["u"]) / dx + std::abs(p_this["v"]) / dy + a_ * std::sqrt(temp_)
+				+ 2 * v_ * (temp_));
+			this->delta_t = std::min(courant * delta_t_temp, this->delta_t);
 		}
 	}
+	std::cout << "delta_t" << delta_t << std::endl;
 }
 //maccormack推进
 void Tdes::maccormackPush() {
 	//predict step
 	timestepCalculator();
 	basic_pd_forward_Calculator();
-	for (size_t i = 1; i < mesh_x - 1; i++) {
-		for (size_t j = 1; j < mesh_y - 1; j++)
+	for (size_t i = 0; i < mesh_x - 1; i++) {
+		for (size_t j = 0; j < mesh_y - 1; j++)
 		{
 			map_point& p_this = points[i][j];
 
@@ -201,26 +217,13 @@ void Tdes::maccormackPush() {
 
 			double pd_e_t_backward = pd_e_t_backward_Calculator(p_this);
 			p_this["e"] += 0.5 * (p_this["pd_e_t_forward"] + pd_e_t_backward) * delta_t;
+
+			p_this["T"] = p_this["e"] / Cv;
+			p_this["p"] = R_gas_constant * p_this["T"] * p_this["rho"];
 		}
 	}
 }
-//收敛判断 todos
-void Tdes::convergenceJudgement() {
-}
 
-//τxx计算
-void Tdes::tau_xx_Calculator() {
-}
-//τxy计算
-void Tdes::tau_xy_Calculator() {
-}
-//τyy计算
-void Tdes::tau_yy_Calculator() {
-}
-void Tdes::q_x_Calculator() {
-}
-void Tdes::q_y_Calculator() {
-}
 //偏rho偏t前差
 double Tdes::pd_rho_t_forward_Calculator(map_point& p_this) {
 	double D_rho_t_forward = -(p_this["u"] * p_this["D_rho_x_forward"] + p_this["rho"] * (p_this["D_u_x_forward"] * p_this["D_u_y_forward"])
@@ -271,8 +274,8 @@ double Tdes::pd_e_t_backward_Calculator(map_point& p_this) {
 }
 
 void Tdes::basic_pd_forward_Calculator() {
-	for (size_t i = 1; i < mesh_x - 1; i++) {
-		for (size_t j = 1; j < mesh_y - 1; j++)
+	for (size_t i = 0; i < mesh_x - 1; i++) {
+		for (size_t j = 0; j < mesh_y - 1; j++)
 		{
 			map_point& p_this = points[i][j];
 			map_point& p_next_x = points[i + 1][j];
@@ -301,8 +304,8 @@ void Tdes::basic_pd_forward_Calculator() {
 }
 
 void Tdes::basic_pd_backward_Calculator() {
-	for (size_t i = 1; i < mesh_x - 1; i++) {
-		for (size_t j = 1; j < mesh_y - 1; j++)
+	for (size_t i = 1; i <= mesh_x - 1; i++) {
+		for (size_t j = 1; j <= mesh_y - 1; j++)
 		{
 			map_point& p_this = points[i][j];
 			map_point& p_pre_x = points[i - 1][j];
@@ -329,4 +332,21 @@ void Tdes::basic_pd_backward_Calculator() {
 			p_this["D_e_y_backward"] = D_e_y_backward;
 		}
 	}
+}
+//todos
+//收敛判断 
+void Tdes::convergenceJudgement() {
+}
+//τxx计算
+void Tdes::tau_xx_Calculator() {
+}
+//τxy计算
+void Tdes::tau_xy_Calculator() {
+}
+//τyy计算
+void Tdes::tau_yy_Calculator() {
+}
+void Tdes::q_x_Calculator() {
+}
+void Tdes::q_y_Calculator() {
 }

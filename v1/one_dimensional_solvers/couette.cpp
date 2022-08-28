@@ -12,8 +12,8 @@ Couette::Couette(size_t mesh_qty, size_t total_time_step, double delta_t, double
 }
 //调用tmda类计算矩阵
 void Couette::compute() const {
-	Tdma tmda(mat_A, vec_b);
-	vec_b = tmda.solve();
+	Tdma* tmda = new Tdma(mat_A, vec_b);
+	vec_b = tmda->solve();
 }
 void Couette::update_vecb() {
 	double b_last = 0;

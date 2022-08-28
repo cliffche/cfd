@@ -36,6 +36,12 @@
     <ClCompile Include="..\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\test_cases\couette_test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test_cases\nozzle_test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\utils\tdma.h">
@@ -54,6 +60,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\test_cases\test_case.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test_cases\couette_test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test_cases\nozzle_test.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

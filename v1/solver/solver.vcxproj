@@ -131,6 +131,8 @@
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\one_dimensional_solvers\couette.cpp" />
     <ClCompile Include="..\one_dimensional_solvers\nozzle.cpp" />
+    <ClCompile Include="..\test_cases\couette_test.cpp" />
+    <ClCompile Include="..\test_cases\nozzle_test.cpp" />
     <ClCompile Include="..\test_cases\tdes_test.cpp" />
     <ClCompile Include="..\test_cases\test_case.cpp" />
     <ClCompile Include="..\two_dimensional_solvers\two_dimensional_explicit_solver.cpp" />
@@ -139,6 +141,8 @@
   <ItemGroup>
     <ClInclude Include="..\one_dimensional_solvers\couette.h" />
     <ClInclude Include="..\one_dimensional_solvers\nozzle.h" />
+    <ClInclude Include="..\test_cases\couette_test.h" />
+    <ClInclude Include="..\test_cases\nozzle_test.h" />
     <ClInclude Include="..\test_cases\tdes_test.h" />
     <ClInclude Include="..\test_cases\test_case.h" />
     <ClInclude Include="..\two_dimensional_solvers\two_dimensional_explicit_solver.h" />
